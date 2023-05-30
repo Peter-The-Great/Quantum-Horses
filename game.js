@@ -23,6 +23,17 @@ class Element{
 		}
 	}
 }
+const currencySymbol = new Intl.NumberFormat(navigator.language, {
+  style: 'currency',
+  currency: 'EUR'
+}).formatToParts(0)
+  .find(part => part.type === 'currency').value;
+
+//Zichtbaarwordt willekeurig opschuiven plus 3
+//Onzekerheids marge.
+//Toon de snelheid.
+//Onzekerheid groot pijltje.
+//Onzekerheid klein pijltje.
 
 /*Create a Javascript Object for a horse with 3 parameters: HTML ID, position x and y*/
 function Horse(id, x, y){
@@ -153,7 +164,7 @@ function Horse(id, x, y){
 var num_lap = 1, results = [], funds = 500, bethorse, amount;
 //Start the function when the document loaded
 document.addEventListener("DOMContentLoaded", function(event) {
-	document.getElementById('funds').innerText = funds;
+	document.getElementById('funds').innerText = currencySymbol + funds;
 	Element.disable('pos');
 	Element.disable('speed');
 
@@ -175,10 +186,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			Element.disable('pos');
 			Element.disable('speed');
 			document.getElementById('pos').onclick = function(){
+				//Show the position
 
 			}
 			document.getElementById('speed').onclick = function(){
-				//Show the speed
+				//Show the Speed
 			}
 			var tds = document.querySelectorAll('#results .result');//Get all cells of result table.
 			for (var i = 0; i < tds.length; i++) {

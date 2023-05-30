@@ -442,7 +442,6 @@ opacity: 0.7;
 }
 
 #funds {font-weight: bold;}
-#funds:before {content: "£";}
 
 label, input, select {float:  left; display: block; width: 8vw; margin-bottom: 0.5vh;}
 label {clear: left;}
