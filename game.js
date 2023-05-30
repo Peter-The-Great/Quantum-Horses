@@ -122,11 +122,19 @@ function Horse(id, x, y){
 			document.getElementById('funds').innerText = funds;
 		}else if (results.length == 4){
 			//All horse arrived, enable again the Start Button
-			document.getElementById('start').disabled = false;
+			disable('start');
+			disable('pos');
+			disable('speed');
 		}
 	}
 }
-
+function disable(id){
+	if(document.getElementById(id).disabled == true){
+		document.getElementById(id).disabled = false;
+	}else{
+		document.getElementById(id).disabled = true;
+	}
+}
 var num_lap = 1, results = [], funds = 500, bethorse, amount;
 //Start the function when the document loaded
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -135,8 +143,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	var horse2 = new Horse('horse2', 20, 8);
 	var horse3 = new Horse('horse3', 20, 12);
 	var horse4 = new Horse('horse4', 20, 16);
-	document.getElementById('pos').disabled = true;
-	document.getElementById('speed').disabled = true;
+	disable('pos');
+	disable('speed');
 
 	//Event listener to the Start button
 	document.getElementById('start').onclick = function(){
@@ -153,8 +161,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 			/*Started the game*/
 			this.disabled = true;/*Disable the start button*/
-			document.getElementById('pos').disabled = false;
-			document.getElementById('speed').disabled = false;
+			disable('pos');
+			disable('speed');
 			document.getElementById('pos').onclick = function(){
 
 			}

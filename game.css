@@ -426,8 +426,8 @@ opacity: 0.7;
 }
 .start:disabled{
 	background: grey;
-
 }
+
 #bet, #results {
 	background-color: #ffefb4;
 	padding: 1vw;
