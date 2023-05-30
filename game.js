@@ -151,7 +151,7 @@ function Horse(id, x, y){
 			}else{
 				funds -= amount;
 			}
-			document.getElementById('funds').innerText = funds;
+			document.getElementById('funds').innerText = currencySymbol + funds;
 		}else if (results.length == 4){
 			//All horse arrived, enable again the Start Button
 			Element.disable('start');
