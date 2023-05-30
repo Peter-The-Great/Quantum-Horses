@@ -1,8 +1,8 @@
 /*
-Assignment: Javascript Assignment
-Filename: game.css
-@author: KITSANTAS FOTIOS (17421808)
-Date: 30/04/17
+Opdracht: JavaScript Game
+Filename: game.html
+@author: Pjotr Wisse (84669)
+Date: 25/11/2020
 */
 
 body {background-image: url(images/bg.png); margin: 0; padding: 0; font-family: calibri, sans-serif;}
@@ -174,7 +174,7 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 	border-image: url(images/inner.png); border-image-slice: 16 16 16 16 fill; border-image-width: 16px 16px 16px 16px; border-image-outset: 0px 0px 0px 0px; border-image-repeat: round round;
 	border-collapse: separate; margin-top: 15vh; margin-left: 10vw; display: table;  solid transparent; background-color: green; width: 60vw; height: 50vh;}
 
-.horse {background-image: url(images/horse2.png);}
+.horse {left: 20vw; background-image: url(images/horse2.png);}
 .horse.runLeft {
 	width: 96px;
 	height: 60px;
@@ -245,7 +245,7 @@ opacity: 0.7;
 }
 
 #horse1 {
-	position: absolute; top: 4vh; z-index: 999;
+	position: absolute; display: block; top: 4vh; z-index: 999;
 }
 
 #horse4 .rider .head {background-image: url(images/head2.png);}
@@ -260,21 +260,22 @@ opacity: 0.7;
 
 #horse2 {
 	position: absolute; top: 8vh;  z-index: 999;
+	display: block;
 	background-image: url(images/horse3.png);
 }
 
 #horse3 {
 	position: absolute; top: 12vh;  z-index: 999;
+	display: block;
 	background-image: url(images/horse1.png);
 }
 
 #horse4 {
 	position: absolute; top: 16vh; z-index: 999;
+	display: block;
 	background-image: url(images/horse4.png);
 }
 
-
-.horse {left: 20vw;}
 
 .horse.standLeft {background-position: 0px -64px; width: 96px; height: 60px;}
 .horse.standLeft .rider .body {background-position: -32px -320px;}

@@ -1,12 +1,32 @@
 /*
-Assignment: Javascript Assignment
-Filename: game.js
-@author: KITSANTAS FOTIOS (17421808)
-Date: 30/04/17
+Opdracht: JavaScript Game
+Filename: game.html
+@author: Pjotr Wisse (84669)
+Date: 25/11/2020
 */
+
+class Element{
+	static disable(id){
+		if(document.getElementById(id).disabled == true){
+			document.getElementById(id).disabled = false;
+		}else{
+			document.getElementById(id).disabled = true;
+		}
+	}
+
+	static changestyle(id){
+		let element = document.getElementById(id);
+		if (element.style.display == 'none'){
+			element.style.display = 'block';
+		}else{
+			element.style.display = 'none';
+		}
+	}
+}
 
 /*Create a Javascript Object for a horse with 3 parameters: HTML ID, position x and y*/
 function Horse(id, x, y){
+	this.id = id;/*HTML ID of the horse*/
 	this.element = document.getElementById(id);/*HTML element of the horse*/
 	this.speed = Math.random()*10 + 10; /*Initiate a random speed for each horse, the greater speed, the faster horse. The value is between 10 and 20*/
 	this.originX = x;/*Original X position*/
@@ -28,6 +48,7 @@ function Horse(id, x, y){
 			//Check if goes through the start line, if horse runs enough number of laps and has pass the start line then stop
 			if (horse.lap == num_lap && horse.x > horse.originX + 6){
 				horse.arrive();
+				Element.changestyle(id);
 			}else{
 				//Make decision to move Down or not
 				//The width of the Down Road is 10wh, then the distance of each horse is 2.5vw (4 horses). The right position of the road is 82.5vw
@@ -122,29 +143,19 @@ function Horse(id, x, y){
 			document.getElementById('funds').innerText = funds;
 		}else if (results.length == 4){
 			//All horse arrived, enable again the Start Button
-			disable('start');
-			disable('pos');
-			disable('speed');
+			Element.disable('start');
+			Element.disable('pos');
+			Element.disable('speed');
 		}
 	}
 }
-function disable(id){
-	if(document.getElementById(id).disabled == true){
-		document.getElementById(id).disabled = false;
-	}else{
-		document.getElementById(id).disabled = true;
-	}
-}
+
 var num_lap = 1, results = [], funds = 500, bethorse, amount;
 //Start the function when the document loaded
 document.addEventListener("DOMContentLoaded", function(event) {
 	document.getElementById('funds').innerText = funds;
-	var horse1 = new Horse('horse1', 20, 4);
-	var horse2 = new Horse('horse2', 20, 8);
-	var horse3 = new Horse('horse3', 20, 12);
-	var horse4 = new Horse('horse4', 20, 16);
-	disable('pos');
-	disable('speed');
+	Element.disable('pos');
+	Element.disable('speed');
 
 	//Event listener to the Start button
 	document.getElementById('start').onclick = function(){
@@ -161,8 +172,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 			/*Started the game*/
 			this.disabled = true;/*Disable the start button*/
-			disable('pos');
-			disable('speed');
+			Element.disable('pos');
+			Element.disable('speed');
 			document.getElementById('pos').onclick = function(){
 
 			}
@@ -173,9 +184,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			for (var i = 0; i < tds.length; i++) {
 				tds[i].className = 'result';//Reset the result.
 			}
-
 			document.getElementById('funds').innerText = funds;
 			results = [];//Results array is to save the horse numbers when the race is finished.
+			var horse1 = new Horse('horse1', 20, 4);
+			var horse2 = new Horse('horse2', 20, 8);
+			var horse3 = new Horse('horse3', 20, 12);
+			var horse4 = new Horse('horse4', 20, 16);
+			Element.changestyle(horse1.id);
+			Element.changestyle(horse2.id);
+			Element.changestyle(horse3.id);
+			Element.changestyle(horse4.id);
+
 			horse1.run();
 			horse2.run();
 			horse3.run();
