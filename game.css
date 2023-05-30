@@ -399,7 +399,7 @@ opacity: 0.7;
 }
 
 
-#start {
+.start {
 	float: right;
 	margin: 1vw;
 	padding: 1vw;
@@ -421,10 +421,10 @@ opacity: 0.7;
 	text-shadow: 2px 2px 2px #333;
 }
 
-#start:hover {
+.start:hover {
 	color: #000;
 }
-#start:disabled{
+.start:disabled{
 	background: grey;
 
 }

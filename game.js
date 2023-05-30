@@ -135,6 +135,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	var horse2 = new Horse('horse2', 20, 8);
 	var horse3 = new Horse('horse3', 20, 12);
 	var horse4 = new Horse('horse4', 20, 16);
+	document.getElementById('pos').disabled = true;
+	document.getElementById('speed').disabled = true;
 
 	//Event listener to the Start button
 	document.getElementById('start').onclick = function(){
@@ -151,6 +153,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 			/*Started the game*/
 			this.disabled = true;/*Disable the start button*/
+			document.getElementById('pos').disabled = false;
+			document.getElementById('speed').disabled = false;
+			document.getElementById('pos').onclick = function(){
+
+			}
+			document.getElementById('speed').onclick = function(){
+				//Show the speed
+			}
 			var tds = document.querySelectorAll('#results .result');//Get all cells of result table.
 			for (var i = 0; i < tds.length; i++) {
 				tds[i].className = 'result';//Reset the result.
