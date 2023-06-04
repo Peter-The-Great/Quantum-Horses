@@ -4,25 +4,18 @@ Filename: game.html
 @author: Pjotr Wisse (84669)
 Date: 25/11/2020
 */
-
-class Element{
-	static disable(id){
-		if(document.getElementById(id).disabled == true){
-			document.getElementById(id).disabled = false;
-		}else{
-			document.getElementById(id).disabled = true;
-		}
+class Element {
+	static disable(id) {
+	  const element = document.getElementById(id);
+	  element.disabled = !element.disabled;
 	}
-
-	static changestyle(id){
-		let element = document.getElementById(id);
-		if (element.style.display == 'none'){
-			element.style.display = 'block';
-		}else{
-			element.style.display = 'none';
-		}
+  
+	static changestyle(id) {
+	  const element = document.getElementById(id);
+	  element.style.display = element.style.display === 'none' ? 'block' : 'none';
 	}
 }
+
 const currencySymbol = new Intl.NumberFormat(navigator.language, {
   style: 'currency',
   currency: 'EUR'
@@ -159,6 +152,21 @@ function Horse(id, x, y){
 			Element.disable('speed');
 		}
 	}
+	this.createArrow = function() {
+		const arrow = document.createElement('div');
+		arrow.className = 'arrow';
+		arrow.style.width = `${this.speed}px`;
+		arrow.style.transform = `translate(${this.x + 5}vw, ${this.y + 5}vh) rotate(-45deg)`;
+		document.body.appendChild(arrow);
+		this.arrow = arrow;
+	  }
+	
+	  this.removeArrow = function() {
+		if (this.arrow) {
+		  document.body.removeChild(this.arrow);
+		  this.arrow = null;
+		}
+	  }
 }
 
 var num_lap = 1, results = [], funds = 500, bethorse, amount;
@@ -212,5 +220,33 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			horse3.run();
 			horse4.run();
 		}
-	}
+	};
+
+	document.getElementById('pos').onclick = () => {
+		const horses = [horse1, horse2, horse3, horse4];
+	
+		horses.forEach((horse) => {
+		  horse.createArrow();
+		});
+	
+		setTimeout(() => {
+		  horses.forEach((horse) => {
+			horse.removeArrow();
+		  });
+		}, 1000);
+	  };
+	  document.getElementById('speed').onclick = () => {
+		const horses = [horse1, horse2, horse3, horse4];
+	
+		horses.forEach((horse) => {
+		  horse.createArrow();
+		});
+	
+		setTimeout(() => {
+		  horses.forEach((horse) => {
+			horse.removeArrow();
+		  });
+		}, 1000);
+	  };
+
 });
