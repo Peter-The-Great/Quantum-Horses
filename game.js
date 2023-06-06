@@ -11,8 +11,8 @@ class Element {
 	}
   
 	static changestyle(id) {
-	  const element = document.getElementById(id);
-	  element.style.display = element.style.display === 'none' ? 'block' : 'none';
+	  // const element = document.getElementById(id);
+	  // element.style.display = element.style.display === 'none' ? 'block' : 'none';
 	}
 }
 
@@ -28,100 +28,63 @@ const currencySymbol = new Intl.NumberFormat(navigator.language, {
 //Onzekerheid groot pijltje.
 //Onzekerheid klein pijltje.
 
+const startAlpha = 10; 
+const width = 65;
+const height = 25;
+const lengte = width * 2 + height * 2;
+
 /*Create a Javascript Object for a horse with 3 parameters: HTML ID, position x and y*/
-function Horse(id, x, y){
+function Horse(id){
 	this.id = id;/*HTML ID of the horse*/
 	this.element = document.getElementById(id);/*HTML element of the horse*/
 	this.speed = Math.random()*10 + 10; /*Initiate a random speed for each horse, the greater speed, the faster horse. The value is between 10 and 20*/
-	this.originX = x;/*Original X position*/
-	this.originY = y;/*Original Y position*/
-	this.x = x; /*Current X*/
-	this.y = y; /*Current Y*/
+	this.alpha = startAlpha;
 	this.number = parseInt(id.replace(/[\D]/g, '')); /*Number of horse, number will be 1 or 2 or 3 or 4*/
 	this.lap = 0; //Current lap of the horse
 
-	this.moveRight = function(){
+	this.move = function() {
 		var horse = this;/*Assign horse to this object*/
 
 		/*Use setTimeout to have the delay in moving the horse*/
 		setTimeout(function(){
+			const leftOffset = 10
 			//Move the horse to right 1vw
-			horse.x ++;
-			horse.element.style.left = horse.x +'vw';
-
-			//Check if goes through the start line, if horse runs enough number of laps and has pass the start line then stop
-			if (horse.lap == num_lap && horse.x > horse.originX + 6){
-				horse.arrive();
-				Element.changestyle(id);
-			}else{
-				//Make decision to move Down or not
-				//The width of the Down Road is 10wh, then the distance of each horse is 2.5vw (4 horses). The right position of the road is 82.5vw
-				//Continue to move right if not reach the point to turn
-				if (horse.x < 82.5 - horse.number*2.5){
-					horse.moveRight();
-				}else{
-					//Change HTML class of horse to runDown
-					horse.element.className = 'horse runDown';
-					//Change the speed, will be random value from 10 to 20
-					horse.speed = Math.random()*10 + 10;
-					horse.moveDown();
+			horse.alpha ++;
+			if (horse.alpha < width) {
+				horse.element.className = 'horse runRight';
+				horse.element.style.top = (horse.number) +'vw';
+				horse.element.style.left = leftOffset + horse.alpha +'vw';
+				//Check if goes through the start line, if horse runs enough number of laps and has pass the start line then stop
+				if (horse.lap == num_lap && horse.alpha > startAlpha) {
+					horse.arrive();
+					Element.changestyle(id);
+					return;
 				}
-			}
-
+			} else if (horse.alpha < width + height) {
+				horse.element.className = 'horse runDown';
+				horse.element.style.top = (horse.number + (horse.alpha - width)) +'vw';
+				horse.element.style.left = leftOffset + width +'vw';
+			} else if (horse.alpha < width + height + width) {
+				horse.element.className = 'horse runLeft';
+				horse.element.style.top = (horse.number + height) +'vw';
+				horse.element.style.left = leftOffset + (width - (horse.alpha - width - height)) +'vw';
+			} else if (horse.alpha < width + height + width + height) {
+				horse.element.className = 'horse runUp';
+				if (horse.alpha == width + height + width) {
+					horse.lap++;
+				}
+				horse.element.style.top = (horse.number + (height - (horse.alpha - width - height - width))) +'vw';
+				horse.element.style.left = leftOffset + 'vw';
+			} else horse.alpha = 0;
+			horse.move();
 		}, 1000/this.speed);
 		/* 1000/this.speed is timeout time*/
-	}
-
-	/*Do the same for moveDown, moveLeft, moveUp*/
-	this.moveDown = function(){
-		var horse = this;
-		setTimeout(function(){
-			horse.y ++;
-			horse.element.style.top = horse.y +'vh';
-			if (horse.y < horse.originY + 65){
-				horse.moveDown();
-			}else{
-				horse.element.className = 'horse runLeft';
-				horse.speed = Math.random()*10 + 10;
-				horse.moveLeft();
-			}
-		}, 1000/this.speed)
-	}
-	this.moveLeft = function(){
-		var horse = this;
-		setTimeout(function(){
-			horse.x --;
-			horse.element.style.left = horse.x +'vw';
-			if (horse.x > 12.5 - horse.number*2.5){
-				horse.moveLeft();
-			}else{
-				horse.element.className = 'horse runUp';
-				horse.speed = Math.random()*10 + 10;
-				horse.moveUp();
-			}
-		}, 1000/this.speed)
-	}
-	this.moveUp = function(){
-		var horse = this;
-		setTimeout(function(){
-			horse.y --;
-			horse.element.style.top = horse.y +'vh';
-			if (horse.y > horse.originY){
-				horse.speed = Math.random()*10 + 10;
-				horse.moveUp();
-			}else{
-				horse.element.className = 'horse runRight';
-				//Nearly finish the lap
-				horse.lap ++;
-				horse.moveRight();
-			}
-		}, 1000/this.speed)
 	}
 
 	/*Trigger the horse by run*/
 	this.run = function(){
 		this.element.className = 'horse runRight';
-		this.moveRight();
+		this.move(); 
 	}
 	this.arrive = function(){
 		//Stop the horse run by change class to standRight
@@ -206,10 +169,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 			document.getElementById('funds').innerText = funds;
 			results = [];//Results array is to save the horse numbers when the race is finished.
-			var horse1 = new Horse('horse1', 20, 4);
-			var horse2 = new Horse('horse2', 20, 8);
-			var horse3 = new Horse('horse3', 20, 12);
-			var horse4 = new Horse('horse4', 20, 16);
+			var horse1 = new Horse('horse1');
+			var horse2 = new Horse('horse2');
+			var horse3 = new Horse('horse3');
+			var horse4 = new Horse('horse4');
 			Element.changestyle(horse1.id);
 			Element.changestyle(horse2.id);
 			Element.changestyle(horse3.id);
