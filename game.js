@@ -4,21 +4,30 @@ Filename: game.html
 @author: Pjotr Wisse (84669)
 Date: 25/11/2020
 */
-class Element {
-	static disable(id) {
-	  const element = document.getElementById(id);
-	  element.disabled = !element.disabled;
-	}
-  
-	static setZichtbaar(id, zichtbaar) {
-	  const element = document.getElementById(id);
-	  if (zichtbaar) {
-		element.style.display = 'block';
-	  } else {
-		element.style.display = 'none';
+let button_start = document.getElementById("start");
+let button_pos = document.getElementById("pos");
+let button_speed = document.getElementById("speed");
+
+const start = String(button_start).replace(button_start, "start");
+const pos = String(button_pos).replace(button_pos, "pos");
+const speed = String(button_speed).replace(button_speed, "speed");
+
+class Button {  
+	static enabled(id, visible) {
+	  let status = document.getElementById(id); //Reinitialization required for some reason.
+		status.disabled = !visible;
+
+	  if (status.disabled) {
+			status.setAttribute("disabled", visible);
+			console.log("Button " + id + " is enabled");
+	  } 
+		
+		else {
+			status.removeAttribute("disabled");
+			console.log("Button " + id + " is disabled");
 	  }
 	}
-  }
+}
 
 class MetOnzekerheid {
 	constructor(van, tot, element, number) {
@@ -28,22 +37,28 @@ class MetOnzekerheid {
 		this.number = number;
 		this.listeners = [];
 	}
+
 	notify() {
-		for (const listener of this.listeners)
+		for (const listener of this.listeners) {
 			listener();
+		}
 	}
+
 	meet() {
 		this.notify();
 		return this.tot = this.van = Math.random(this.tot - this.van) + this.van;
 	}
+
 	beetjeWillekeurig() {
 		this.van -= Math.random() * 10;
 		this.tot += Math.random() * 10;
 	}
+
 	subscribe(listener) {
 		this.listeners.push(listener);
 		this.notify();
 	}
+
 	verhoog(snelheid) {
 		this.van += snelheid.van;
 		this.tot += snelheid.tot;
@@ -62,8 +77,7 @@ const height = 25;
 const lengte = width * 2 + height * 2;
 
 /*Create a Javascript Object for a horse with 3 parameters: HTML ID, position x and y*/
-function Horse(id){
-
+function Horse(id) {
 	let element = document.getElementById(id);/*HTML element of the horse*/
 	let snelheidsLabel = document.getElementById(id + "Snelheid");
 	let number = parseInt(id.replace('horse', ''));/*Horse number*/
@@ -82,7 +96,7 @@ function Horse(id){
 			//Check if goes through the start line, if horse runs enough number of laps and has pass the start line then stop
 			if (this.lap == num_lap && this.alpha > startAlpha) {
 				this.arrive();
-				Element.changestyle(id);
+				//Element.changestyle(id);
 				return;
 			}
 		} else if (this.alpha < width + height) {
@@ -111,13 +125,15 @@ function Horse(id){
 		move: function() {
 			var horse = this;/*Assign horse to this object*/
 			/*Use setTimeout to have the delay in moving the horse*/
-			setTimeout(function(){
+			setTimeout(function() {
 				//Move the horse to right 1vw
 				horse.zetStap();
 				//If the horse is not arrive, then continue to move
 				if (horse.alpha < lengte) {
 					horse.move();
-				}else if (horse.alpha >= lengte){
+				}
+				
+				else if (horse.alpha >= lengte) {
 					//If the horse is arrive, then stop
 					horse.arrive();
 				}
@@ -130,11 +146,11 @@ function Horse(id){
 		},
 
 		/*Trigger the horse by run*/
-		run: function(){
+		run: function() {
 			this.element.className = 'horse runRight';
 			this.move(); 
 		},
-		arrive: function(){
+		arrive: function() {
 			//Stop the horse run by change class to standRight
 			this.element.className = 'horse standRight';
 			this.lap = 0;//Reset the lap
@@ -148,29 +164,36 @@ function Horse(id){
 			results.push(this.number);
 
 			//Win horse
-			if (results.length == 1){
+			if (results.length == 1) {
 				//If win horse is the bet horse, then add the fund
-				if (this.number == bethorse){
+				if (this.number == bethorse) {
 					funds += amount;
-				}else{
+				}
+				
+				else {
 					funds -= amount;
 				}
+				
 				document.getElementById('funds').innerText = currencySymbol + funds;
-			}else if (results.length == 4){
+			}
+			
+			else if (results.length == 4){
 				//All horse arrived, enable again the Start Button
-				Element.disable('start');
-				Element.disable('pos');
-				Element.disable('speed');
+				//Element.disable('start');
+				//Element.disable('pos');
+				//Element.disable('speed');
 			}
 		},
+
 		setSpeed: function (speed_) {
 			speed = speed_;
 		},
+
 		meetPositie: function() {
 			alpha.meet();
 			speed.beetjeWillekeurig();
-
 		},
+
 		meetSnelheid: function() {
 			alpha.beetjeWillekeurig();
 			speed.meet();
@@ -180,10 +203,9 @@ function Horse(id){
 
 function setZichtbaarhiedHorses(zichtbaar) {
 	for (const horse of horses) {
-		Element.setZichtbaar(horse.id, zichtbaar);
-		Element.setZichtbaar(horse.id + "Snelheid", zichtbaar);
+		//Element.setZichtbaar(horse.id, zichtbaar);
+		//Element.setZichtbaar(horse.id + "Snelheid", zichtbaar);
 	}
-	
 }
 
 var horse1 = new Horse('horse1');
@@ -195,16 +217,21 @@ var horses = [horse1, horse2, horse3, horse4];
 var num_lap, results = [], funds = 500, bethorse, amount, random;
 //Start the function when the document loaded
 document.addEventListener("DOMContentLoaded", function() {
+	Button.enabled(start, true);
+	Button.enabled(pos, false);
+	Button.enabled(speed, false);
+
 	if(document.cookie !== ""){
 		document.getElementById('email').value = document.cookie.split('=')[1];
 		document.getElementById('password').value = document.cookie.split('=')[2];
 	}
 	document.getElementById('funds').innerText = currencySymbol + funds;
-	Element.disable('pos');
-	Element.disable('speed');
-
 	//Event listener to the Start button
-	document.getElementById('start').onclick = function(){
+	document.getElementById(start).onclick = function() {
+		Button.enabled(start, false);
+		Button.enabled(pos, true);
+		Button.enabled(speed, true);
+
 		// random = execute(document.getElementById("email").value, document.getElementById("password").value,'version 1.0\nqubits 2\nprep_z q[0]\nprep_z q[1]\nH q[0]\nCNOT q[0],q[1]\nmeasure q[0]\nmeasure q[1]', 10);
 		amount = parseInt(document.getElementById('amount').value);
 		num_lap = parseInt(document.getElementById('num_lap').value);
@@ -218,16 +245,20 @@ document.addEventListener("DOMContentLoaded", function() {
 		}else{
 
 			/*Started the game*/
-			this.disabled = true;/*Disable the start button*/
+			//this.disabled = true;/*Disable the start button*/
 			//setZichtbaarhiedHorses(false);
-			Element.disable('pos');
-			Element.disable('speed');
-			document.getElementById('pos').onclick = function(){
+			document.getElementById(pos).onclick = function(){
+				Button.enabled(pos, false);
+				Button.enabled(speed, true);
+
 				//Show the position of the horse
 				for (const horse of horses)
 					horse.meetPositie();				
 			}
-			document.getElementById('speed').onclick = function(){
+			document.getElementById(speed).onclick = function(){
+				Button.enabled(pos, true);
+				Button.enabled(speed, false);
+
 				//Show the Speed
 				for (const horse of horses)
 					horse.meetSnelheid();
