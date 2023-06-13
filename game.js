@@ -6,20 +6,18 @@ Date: 25/11/2020
 */
 class Element {
 	static disable(id) {
-	  const element = document.getElementById(id);
-	  element.disabled = !element.disabled;
+	  document.getElementById(id).disabled = true;
 	}
   
 	static setZichtbaar(id, zichtbaar) {
-		const element = document.getElementById(id);
-		console.log(id);
-		if (zichtbaar) {
-			element.style.display = 'block';
-		}
-		else
-			element.style.display = 'none';
+	  const element = document.getElementById(id);
+	  if (zichtbaar) {
+		element.style.display = 'block';
+	  } else {
+		element.style.display = 'none';
+	  }
 	}
-}
+  }
 
 class MetOnzekerheid {
 	constructor(van, tot) {
@@ -55,12 +53,6 @@ const currencySymbol = new Intl.NumberFormat(navigator.language, {
 }).formatToParts(0)
   .find(part => part.type === 'currency').value;
 
-//Zichtbaarwordt willekeurig opschuiven plus 3
-//Onzekerheids marge.
-//Toon de snelheid.
-//Onzekerheid groot pijltje.
-//Onzekerheid klein pijltje.
-
 const startAlpha = 10; 
 const width = 65;
 const height = 25;
@@ -68,12 +60,10 @@ const lengte = width * 2 + height * 2;
 
 /*Create a Javascript Object for a horse with 3 parameters: HTML ID, position x and y*/
 function Horse(id){
-	let number = parseInt(id.replace(/[\D]/g, '')); /*Number of horse, number will be 1 or 2 or 3 or 4*/
 
 	let element = document.getElementById(id);/*HTML element of the horse*/
-	let snelheidsLabel = document.getElementById("horse" + number + "Snelheid");
+	let snelheidsLabel = document.getElementById(id + "Snelheid");
 
-	
 	let speed = new MetOnzekerheid(10, 20); /*Initiate a random speed for each horse, the greater speed, the faster horse. The value is between 10 and 20*/
 	speed.subscribe(() => {
 		snelheidsLabel.innerText = "Snelheid van horse " + id + " is: " + speed.van + " tot " + speed.tot;
@@ -111,6 +101,8 @@ function Horse(id){
 
 	return {
 		id: id,
+		element, element,
+		alpha: alpha,
 		move: function() {
 			var horse = this;/*Assign horse to this object*/
 
@@ -124,7 +116,7 @@ function Horse(id){
 		},
 
 		zetStap: function() {
-			this.alpha.verhoog(this.speed);	
+			this.alpha.verhoog(speed);
 		},
 
 		/*Trigger the horse by run*/
@@ -176,10 +168,10 @@ function Horse(id){
 	}
 }
 
-function setZichtbaarhiedHorses(zichtbaaar) {
+function setZichtbaarhiedHorses(zichtbaar) {
 	for (const horse of horses) {
-		Element.setZichtbaar(horse.id, zichtbaaar);
-		Element.setZichtbaar(horse.snelheidsLabel.id, zichtbaaar);
+		Element.setZichtbaar(horse.id, zichtbaar);
+		Element.setZichtbaar(horse.id + "Snelheid", zichtbaar);
 	}
 	
 }
@@ -278,7 +270,7 @@ async function execute(email, password, code, shots) {
 	  if (!response.ok) throw new Error();
 	  return await (response.json());
 	}
-	const projectCreationResponse = await call("projects/", {
+	const projectCreationResponse = await call("PaardenProject/", {
 		name: "generatedProject",
 		backend_type: "https://api.quantum-inspire.com/backendtypes/1/",
 		default_number_of_shots: shots
