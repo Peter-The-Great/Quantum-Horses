@@ -10,9 +10,42 @@ class Element {
 	  element.disabled = !element.disabled;
 	}
   
-	static changestyle(id) {
-	const element = document.getElementById(id);
-	element.style.display = element.style.display === 'none' ? 'block' : 'none';
+	static setZichtbaar(id, zichtbaar) {
+		const element = document.getElementById(id);
+		console.log(id);
+		if (zichtbaar) {
+			element.style.display = 'block';
+		}
+		else
+			element.style.display = 'none';
+	}
+}
+
+class MetOnzekerheid {
+	constructor(van, tot) {
+		this.van = van;
+		this.tot = tot;
+		this.listeners = [];
+	}
+	meet() {
+		notify();
+		return this.tot = this.van = Math.random(this.tot - this.van) + this.van;
+	}
+	beetjeWillekeurig() {
+		this.van -= Math.random() * 10;
+		this.tot += Math.random() * 10;
+	}
+	subscribe(listener) {
+		this.listeners.push(listener);
+		this.notify();
+	}
+	notify() {
+		for (const listener of this.listeners)
+			listener();
+	}
+	verhoog(snelheid) {
+		this.van += snelheid.van;
+		this.tot += snelheid.tot;
 	}
 }
 
@@ -35,102 +68,128 @@ const lengte = width * 2 + height * 2;
 
 /*Create a Javascript Object for a horse with 3 parameters: HTML ID, position x and y*/
 function Horse(id){
-	this.id = id;/*HTML ID of the horse*/
-	this.element = document.getElementById(id);/*HTML element of the horse*/
-	this.speed = Math.random()*10 + 10; /*Initiate a random speed for each horse, the greater speed, the faster horse. The value is between 10 and 20*/
-	this.alpha = startAlpha;
-	this.number = parseInt(id.replace(/[\D]/g, '')); /*Number of horse, number will be 1 or 2 or 3 or 4*/
-	this.lap = 0; //Current lap of the horse
+	let number = parseInt(id.replace(/[\D]/g, '')); /*Number of horse, number will be 1 or 2 or 3 or 4*/
 
-	this.move = function() {
-		var horse = this;/*Assign horse to this object*/
+	let element = document.getElementById(id);/*HTML element of the horse*/
+	let snelheidsLabel = document.getElementById("horse" + number + "Snelheid");
 
-		/*Use setTimeout to have the delay in moving the horse*/
-		setTimeout(function(){
-			const leftOffset = 10
-			//Move the horse to right 1vw
-			horse.alpha ++;
-			if (horse.alpha < width) {
-				horse.element.className = 'horse runRight';
-				horse.element.style.top = (horse.number) +'vw';
-				horse.element.style.left = leftOffset + horse.alpha +'vw';
-				//Check if goes through the start line, if horse runs enough number of laps and has pass the start line then stop
-				if (horse.lap == num_lap && horse.alpha > startAlpha) {
-					horse.arrive();
-					Element.changestyle(id);
-					return;
-				}
-			} else if (horse.alpha < width + height) {
-				horse.element.className = 'horse runDown';
-				horse.element.style.top = (horse.number + (horse.alpha - width)) +'vw';
-				horse.element.style.left = leftOffset + width +'vw';
-			} else if (horse.alpha < width + height + width) {
-				horse.element.className = 'horse runLeft';
-				horse.element.style.top = (horse.number + height) +'vw';
-				horse.element.style.left = leftOffset + (width - (horse.alpha - width - height)) +'vw';
-			} else if (horse.alpha < width + height + width + height) {
-				horse.element.className = 'horse runUp';
-				if (horse.alpha == width + height + width) {
-					horse.lap++;
-				}
-				horse.element.style.top = (horse.number + (height - (horse.alpha - width - height - width))) +'vw';
-				horse.element.style.left = leftOffset + 'vw';
-			} else horse.alpha = 0;
-			horse.move();
-		}, 1000/this.speed);
-		/* 1000/this.speed is timeout time*/
-	}
-
-	/*Trigger the horse by run*/
-	this.run = function(){
-		this.element.className = 'horse runRight';
-		this.move(); 
-	}
-	this.arrive = function(){
-		//Stop the horse run by change class to standRight
-		this.element.className = 'horse standRight';
-		this.lap = 0;//Reset the lap
-
-		/*Show the result*/
-		var tds = document.querySelectorAll('#results .result');//Get all table cell to display the result
-		//results.length is the current arrive position
-		tds[results.length].className = 'result horse'+this.number;//The class of result look like: result horse1...
-
-		//Push the horse number to results array, according the the results array, we know the order of race results
-		results.push(this.number);
-
-		//Win horse
-		if (results.length == 1){
-			//If win horse is the bet horse, then add the fund
-			if (this.number == bethorse){
-				funds += amount;
-			}else{
-				funds -= amount;
-			}
-			document.getElementById('funds').innerText = currencySymbol + funds;
-		}else if (results.length == 4){
-			//All horse arrived, enable again the Start Button
-			Element.disable('start');
-			Element.disable('pos');
-			Element.disable('speed');
-		}
-	}
-	this.createArrow = function() {
-		const arrow = document.createElement('div');
-		arrow.className = 'arrow';
-		arrow.style.width = `${this.speed}px`;
-		arrow.style.transform = `translate(${this.x + 5}vw, ${this.y + 5}vh) rotate(-45deg)`;
-		document.body.appendChild(arrow);
-		this.arrow = arrow;
-	  }
 	
-	  this.removeArrow = function() {
-		if (this.arrow) {
-		  document.body.removeChild(this.arrow);
-		  this.arrow = null;
-		}
-	  }
+	let speed = new MetOnzekerheid(10, 20); /*Initiate a random speed for each horse, the greater speed, the faster horse. The value is between 10 and 20*/
+	speed.subscribe(() => {
+		snelheidsLabel.innerText = "Snelheid van horse " + id + " is: " + speed.van + " tot " + speed.tot;
+	});
+	let alpha = new MetOnzekerheid(startAlpha, startAlpha);
+	alpha.subscribe(() => {
+		if (this.alpha < width) {
+			this.element.className = 'horse runRight';
+			this.element.style.top = (this.number) +'vw';
+			this.element.style.left = leftOffset + this.alpha +'vw';
+			//Check if goes through the start line, if horse runs enough number of laps and has pass the start line then stop
+			if (this.lap == num_lap && this.alpha > startAlpha) {
+				this.arrive();
+				Element.changestyle(id);
+				return;
+			}
+		} else if (this.alpha < width + height) {
+			this.element.className = 'horse runDown';
+			this.element.style.top = (this.number + (this.alpha - width)) +'vw';
+			this.element.style.left = leftOffset + width +'vw';
+		} else if (this.alpha < width + height + width) {
+			this.element.className = 'horse runLeft';
+			this.element.style.top = (this.number + height) +'vw';
+			this.element.style.left = leftOffset + (width - (this.alpha - width - height)) +'vw';
+		} else if (this.alpha < width + height + width + height) {
+			this.element.className = 'horse runUp';
+			if (this.alpha == width + height + width) {
+				this.lap++;
+			}
+			this.element.style.top = (this.number + (height - (this.alpha - width - height - width))) +'vw';
+			this.element.style.left = leftOffset + 'vw';
+		} else this.alpha = 0;
+	});
+	let lap = 0; //Current lap of the horse
+
+	return {
+		id: id,
+		move: function() {
+			var horse = this;/*Assign horse to this object*/
+
+			/*Use setTimeout to have the delay in moving the horse*/
+			setTimeout(function(){
+				const leftOffset = 10
+				//Move the horse to right 1vw
+				horse.zetStap();
+				horse.move();
+			}, 100);
+		},
+
+		zetStap: function() {
+			this.alpha.verhoog(this.speed);	
+		},
+
+		/*Trigger the horse by run*/
+		run: function(){
+			this.element.className = 'horse runRight';
+			this.move(); 
+		},
+		arrive: function(){
+			//Stop the horse run by change class to standRight
+			this.element.className = 'horse standRight';
+			this.lap = 0;//Reset the lap
+
+			/*Show the result*/
+			var tds = document.querySelectorAll('#results .result');//Get all table cell to display the result
+			//results.length is the current arrive position
+			tds[results.length].className = 'result horse'+this.number;//The class of result look like: result horse1...
+
+			//Push the horse number to results array, according the the results array, we know the order of race results
+			results.push(this.number);
+
+			//Win horse
+			if (results.length == 1){
+				//If win horse is the bet horse, then add the fund
+				if (this.number == bethorse){
+					funds += amount;
+				}else{
+					funds -= amount;
+				}
+				document.getElementById('funds').innerText = currencySymbol + funds;
+			}else if (results.length == 4){
+				//All horse arrived, enable again the Start Button
+				Element.disable('start');
+				Element.disable('pos');
+				Element.disable('speed');
+			}
+		},
+		setSpeed: function (speed_) {
+			speed = speed_;
+		},
+		meetPositie: function() {
+			alpha.meet();
+			speed.beetjeWillekeurig();
+
+		},
+		meetSnelheid: function() {
+			alpha.beetjeWillekeurig();
+			speed.meet();
+		},
+	}
 }
+
+function setZichtbaarhiedHorses(zichtbaaar) {
+	for (const horse of horses) {
+		Element.setZichtbaar(horse.id, zichtbaaar);
+		Element.setZichtbaar(horse.snelheidsLabel.id, zichtbaaar);
+	}
+	
+}
+
+var horse1 = new Horse('horse1');
+var horse2 = new Horse('horse2');
+var horse3 = new Horse('horse3');
+var horse4 = new Horse('horse4');
+var horses = [horse1, horse2, horse3, horse4];
+
 var num_lap = 1, results = [], funds = 500, bethorse, amount, random;
 //Start the function when the document loaded
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -144,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 	//Event listener to the Start button
 	document.getElementById('start').onclick = function(){
-		random = execute(document.getElementById("email").value, document.getElementById("password").value,'version 1.0\nqubits 2\nprep_z q[0]\nprep_z q[1]\nH q[0]\nCNOT q[0],q[1]\nmeasure q[0]\nmeasure q[1]', 10);
+		// random = execute(document.getElementById("email").value, document.getElementById("password").value,'version 1.0\nqubits 2\nprep_z q[0]\nprep_z q[1]\nH q[0]\nCNOT q[0],q[1]\nmeasure q[0]\nmeasure q[1]', 10);
 		amount = parseInt(document.getElementById('amount').value);
 		num_lap = parseInt(document.getElementById('num_lap').value);
 		bethorse = parseInt(document.getElementById('bethorse').value);
@@ -158,6 +217,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 			/*Started the game*/
 			this.disabled = true;/*Disable the start button*/
+			setZichtbaarhiedHorses(false);
 			Element.disable('pos');
 			Element.disable('speed');
 			document.getElementById('pos').onclick = function(){
@@ -173,14 +233,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 			document.getElementById('funds').innerText = funds;
 			results = [];//Results array is to save the horse numbers when the race is finished.
-			var horse1 = new Horse('horse1');
-			var horse2 = new Horse('horse2');
-			var horse3 = new Horse('horse3');
-			var horse4 = new Horse('horse4');
-			Element.changestyle(horse1.id);
-			Element.changestyle(horse2.id);
-			Element.changestyle(horse3.id);
-			Element.changestyle(horse4.id);
+			
 
 			horse1.run();
 			horse2.run();
@@ -190,30 +243,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	};
 
 	document.getElementById('pos').onclick = () => {
-		const horses = [horse1, horse2, horse3, horse4];
-	
-		horses.forEach((horse) => {
-		  horse.createArrow();
-		});
-	
-		setTimeout(() => {
-		  horses.forEach((horse) => {
-			horse.removeArrow();
-		  });
-		}, 1000);
+		setZichtbaarhiedHorses(true);
+		for (const horse of horses)
+			horse.meetPositie();
 	  };
 	  document.getElementById('speed').onclick = () => {
-		const horses = [horse1, horse2, horse3, horse4];
-	
-		horses.forEach((horse) => {
-		  horse.createArrow();
-		});
-	
-		setTimeout(() => {
-		  horses.forEach((horse) => {
-			horse.removeArrow();
-		  });
-		}, 1000);
+		setZichtbaarhiedHorses(true);
+		for (const horse of horses)
+			horse.meetSnelheid();
 	};
 }
 );
