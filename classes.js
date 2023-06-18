@@ -67,7 +67,7 @@ function Horse(id) {
 	let length = (width * 2) + (height * 2);
 
 	let speed_label = document.getElementById(id + "Speed");
-	let id_number = parseInt(id.replace("horse", "")) /*Horse number*/
+	let number = parseInt(id.replace("horse", "")) /*Horse number*/
 	let speed = new Uncertainty(10, 20); /*Initiate a random speed for each horse, the greater speed, the faster horse. The value is 
 	between 10 and 20*/
 	let lap = 0;
@@ -76,22 +76,22 @@ function Horse(id) {
 		speed_label.innerText = "Speed for horse " + id + " is: " + speed.from + " to " + speed.to;
 	});
 	
-	let alpha = new Uncertainty(start_alpha, start_alpha, id, id_number);
+	let alpha = new Uncertainty(start_alpha, start_alpha, id, number);
 	let leftOffset = 11;
 	let to_right = true;
 	let to_down = true;
 
 	let pos = 0;
 
-	function arrive() {
+	function arrive(numbering) {
 		//Stop the horse run by change class to standRight
 		this.status.className = 'horse standRight';
 		this.lap = 0;//Reset the lap
 
+		let res = 'result horse' + numbering;
 		/*Show the result*/
-		let tds = document.querySelectorAll('#results .result');//Get all table cell to display the result
 		//results.length is the current arrive position
-		tds[results.length].className = 'result horse'+this.number;//The class of result look like: result horse1...
+		document.querySelectorAll('#results .result')[results.length].className.replace("result", res); //The class of result look like: result horse1...
 
 		//Push the horse number to results array, according the the results array, we know the order of race results
 		results.push(this.number);
@@ -125,9 +125,9 @@ function Horse(id) {
 			alpha.from += 0.25;
 
 			//Check if goes through the start line, if horse runs enough number of laps and has pass the start line then stop
-			if (lap >= num_lap && leftOffset + alpha.from + 4) {
+			if (lap >= num_lap && leftOffset + alpha.from + 40) {
 				console.log("Horse " + id + " has arrived");
-				arrive();
+				arrive(id);
 				return;
 			}
 
@@ -232,7 +232,7 @@ const horse3 = new Horse("horse3");
 const horse4 = new Horse("horse4");
 
 const horses = [horse1, horse2, horse3, horse4];
-let results = [], funds = 500, bethorse, amount, random;
+var results = [], funds = 500, bethorse, amount, random;
 
 function setInvisibility(visibility) {
 	let status = document.getElementById("measure"); //Variable have to be called status or else it throws error.

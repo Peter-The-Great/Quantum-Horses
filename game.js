@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	document.getElementById("start").onclick = function() {
 		Button.enabled("start", false);
-		//Button.enabled("pos", true);
+		Button.enabled("pos", true);
 		Button.enabled("measure", true);
 
 		// random = execute(document.getElementById("email").value, document.getElementById("password").value,'version 1.0\nqubits 2\nprep_z q[0]\nprep_z q[1]\nH q[0]\nCNOT q[0],q[1]\nmeasure q[0]\nmeasure q[1]', 10);
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				//Show the position of the horse
 				for (const horse of horses) {
 					horse.measurePosition() 
-				}			
+				}
 			}
 
 			document.getElementById("measure").onclick = function() {
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				tds[i].className = 'result'; //Reset the result.
 			}
 
-			document.getElementById('funds').innerText = funds;
+			document.getElementById('funds').innerText = currencySymbol + funds;
 			results = [];//Results array is to save the horse numbers when the race is finished.
 
 			for (const horse of horses) {
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	};
 
-	/*document.getElementById("pos").onclick = function() {
+	document.getElementById("pos").onclick = function() {
 		setInvisibility(true);
 
 		for (const horse of horses) {
@@ -89,5 +89,5 @@ document.addEventListener("DOMContentLoaded", function() {
 		for (const horse of horses) {
 			horse.measureSpeed();
 		}
-	};*/
+	};
 });
