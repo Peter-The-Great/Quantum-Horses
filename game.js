@@ -6,9 +6,9 @@ Date: 25/11/2020
 */
 
 document.addEventListener("DOMContentLoaded", function() {
-	Button.enabled("start", false);
-	Button.enabled("pos", true);
-	Button.enabled("speed", true);
+	Button.enabled("start", true);
+	Button.enabled("pos", false);
+	Button.enabled("measure", false);
 
 	if (document.cookie !== "") {
 		document.getElementById('email').value = document.cookie.split('=')[1];
@@ -18,13 +18,9 @@ document.addEventListener("DOMContentLoaded", function() {
 	document.getElementById('funds').innerText = currencySymbol + funds;
 
 	document.getElementById("start").onclick = function() {
-		Button.enabled("start", true);
-		Button.enabled("pos", false);
-		Button.enabled("speed", false);
-
-		for (const horse of horses) {
-			horse.alpha.subscribe(() => {});
-		} 
+		Button.enabled("start", false);
+		Button.enabled("pos", true);
+		Button.enabled("measure", true);
 
 		// random = execute(document.getElementById("email").value, document.getElementById("password").value,'version 1.0\nqubits 2\nprep_z q[0]\nprep_z q[1]\nH q[0]\nCNOT q[0],q[1]\nmeasure q[0]\nmeasure q[1]', 10);
 		amount = parseInt(document.getElementById('amount').value);
@@ -44,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 			document.getElementById("pos").onclick = function() {
 				Button.enabled("pos", false);
-				Button.enabled("speed", true);
+				Button.enabled("measure", true);
 
 				//Show the position of the horse
 				for (const horse of horses) {
@@ -52,9 +48,9 @@ document.addEventListener("DOMContentLoaded", function() {
 				}			
 			}
 
-			document.getElementById("speed").onclick = function() {
+			document.getElementById("measure").onclick = function() {
 				Button.enabled("pos", true);
-				Button.enabled("speed", false);
+				Button.enabled("measure", false);
 
 				//Show the Speed
 				for (const horse of horses) {
@@ -87,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	};
 
-	document.getElementById("speed").onclick = () => {
+	document.getElementById("measure").onclick = () => {
 		setVisibilityHorses(true);
 
 		for (const horse of horses) {

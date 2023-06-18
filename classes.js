@@ -1,13 +1,15 @@
 class Button {  
-	static enabled(status, visible) {
-	status = document.getElementById(status);	//Reinitialization required for some reason.
-	  if (status.disabled == true) {
-			status.disabled = visible;
-	  }
+	static enabled(id, visible) {
+		let status = document.getElementById(id);	//Reinitialization required for some reason.
+		status.disabled = !visible;
+		
+		if (status.disabled) {
+			status.setAttribute("disabled", visible);
+		}
+		
 		else {
-			console.log(status.disabled);
-			status.disabled = visible;
-	  }
+			status.removeAttribute("disabled");
+		}
 	}
 }
 
@@ -60,8 +62,8 @@ let num_lap;
 function Horse(id) {
 	let status = document.getElementById(id);
 	const start_alpha = 10;
-	const width = 65;
-	const height = 25;
+	const width = 66.5;
+	const height = 35;
 	let length = (width * 2) + (height * 2);
 
 	let speed_label = document.getElementById(id + "Speed");
@@ -75,54 +77,64 @@ function Horse(id) {
 	});
 	
 	let alpha = new Uncertainty(start_alpha, start_alpha, id, id_number);
-	let leftOffset = 8;
+	let leftOffset = 11;
+	let to_right = true;
+	let to_down = true;
+
+	let pos = 0;
 
 	alpha.subscribe(() => {
-		//To right
-		if (alpha.from < width) {
+		if (to_right && alpha.from <= width) {
 			status.className = 'horse runRight';
-			status.style.left = leftOffset + alpha.from + 'vw';
-			alpha.from += 0.3;
+			status.style.left = leftOffset + alpha.from + "vw";
+			alpha.from += 0.25;
 
 			//Check if goes through the start line, if horse runs enough number of laps and has pass the start line then stop
-			if (lap == num_lap && alpha > start_alpha) {
+			if (lap >= num_lap && leftOffset + alpha.from + 4) {
+				console.log("Horse " + id + " has arrived");
 				this.arrive();
 				return;
 			}
-		} 
-		
-		//To down
-		else if (alpha.from > width) {
-			status.className = 'horse runDown';
-			status.style.top = alpha.to + 'vw';
-			alpha.to += 0.3;
 
-			console.log(alpha.to);
+			return;
+		}
+
+		if (to_down && alpha.to <= height) {
+			to_right = false;
+			status.className = 'horse runDown';
+  			status.style.top = alpha.to + "vw";
+			alpha.to += 0.25;
+			return;
 		} 
 		
-		//To left
-		else if (alpha.from > width) {
+		if (alpha.from >= pos - leftOffset / 3) {
+			to_down = false;
 			status.className = 'horse runLeft';
-			status.style.left = (leftOffset + alpha.from) + 'vw';
-			alpha.from -= 0.3;
-		} 
-		
-		//To up
-		else if (alpha.from < leftOffset) {
+			status.style.left = leftOffset + alpha.from + "vw";
+			alpha.from -= 0.25;
+			return;
+		}		  
+
+		if (alpha.to >= start_alpha - leftOffset / 3) {
 			status.className = 'horse runUp';
-	
-			if (alpha.from == width + height + width) {
+			
+			if (alpha.to == width / start_alpha - 0.15) {
 				lap++;
 			}
 
-			status.style.top = (this.id_number + (height - (alpha.from - width - height - width))) + 'vw';
-			alpha.to -= 0.3;
-		} 
-	
-		else {
-			this.alpha = 0;
-			//alpha.from += 1;
-			console.log(alpha.from);
+			status.style.top = alpha.to + "vw";
+			alpha.to -= 0.25;
+
+			return;
+		}
+
+		//Reset the lap
+		if (alpha.from <= start_alpha) {
+			to_right = true;
+			to_down = true;
+			alpha.from = pos;
+			alpha.to = pos + leftOffset;
+			return;
 		}
 	});
 
@@ -144,7 +156,7 @@ function Horse(id) {
 				else if (horse.alpha >= length) {
 					horse.arrive(); //If the horse is arrive, then stop
 				}
-			}, 100);
+			}, 25);
 		},
 
 		step: function() {
