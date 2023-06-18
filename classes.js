@@ -35,8 +35,8 @@ class Uncertainty {
 	
 	measure() {
 		this.update();
-		this.from = Math.random(this.to - this.from) + this.from;
-		this.to = Math.random(this.to) + this.to;
+		this.from = Math.round(Math.random(this.to - this.from)) + this.from;
+		this.to = Math.round(Math.random(this.to)) + this.to;
 	}
 
 	randomMeasure() {
@@ -70,7 +70,7 @@ function Horse(id) {
 	let id_number = parseInt(id.replace("horse", "")) /*Horse number*/
 	let speed = new Uncertainty(10, 20); /*Initiate a random speed for each horse, the greater speed, the faster horse. The value is 
 	between 10 and 20*/
-	let lap = 0; //Current lap of the horse
+	let lap = 0;
 
 	speed.subscribe(() => {
 		speed_label.innerText = "Speed for horse " + id + " is: " + speed.from + " to " + speed.to;
@@ -83,6 +83,41 @@ function Horse(id) {
 
 	let pos = 0;
 
+	function arrive() {
+		//Stop the horse run by change class to standRight
+		this.status.className = 'horse standRight';
+		this.lap = 0;//Reset the lap
+
+		/*Show the result*/
+		let tds = document.querySelectorAll('#results .result');//Get all table cell to display the result
+		//results.length is the current arrive position
+		tds[results.length].className = 'result horse'+this.number;//The class of result look like: result horse1...
+
+		//Push the horse number to results array, according the the results array, we know the order of race results
+		results.push(this.number);
+
+		//Win horse
+		if (results.length == 1) {
+			//If win horse is the bet horse, then add the fund
+			if (this.number == bethorse) {
+				funds += amount;
+			}
+			
+			else {
+				funds -= amount;
+			}
+			
+			document.getElementById('funds').innerText = currencySymbol + funds;
+		}
+		
+		else if (results.length == 4) {
+			//All horse arrived, enable again the Start Button
+			Button.enabled("start", true);
+			Button.enabled("pos", false);
+			Button.enabled("measure", false);
+		}
+	}
+
 	alpha.subscribe(() => {
 		if (to_right && alpha.from <= width) {
 			status.className = 'horse runRight';
@@ -92,7 +127,7 @@ function Horse(id) {
 			//Check if goes through the start line, if horse runs enough number of laps and has pass the start line then stop
 			if (lap >= num_lap && leftOffset + alpha.from + 4) {
 				console.log("Horse " + id + " has arrived");
-				this.arrive();
+				arrive();
 				return;
 			}
 
@@ -156,6 +191,8 @@ function Horse(id) {
 				else if (horse.alpha >= length) {
 					horse.arrive(); //If the horse is arrive, then stop
 				}
+
+				
 			}, 25);
 		},
 
@@ -171,38 +208,6 @@ function Horse(id) {
 		run: function() {
 			this.status.className = 'horse runRight';
 			this.move(); 
-		},
-
-		arrive: function() {
-			//Stop the horse run by change class to standRight
-			this.status.className = 'horse standRight';
-			this.lap = 0;//Reset the lap
-
-			/*Show the result*/
-			let tds = document.querySelectorAll('#results .result');//Get all table cell to display the result
-			//results.length is the current arrive position
-			tds[results.length].className = 'result horse'+this.number;//The class of result look like: result horse1...
-
-			//Push the horse number to results array, according the the results array, we know the order of race results
-			results.push(this.number);
-
-			//Win horse
-			if (results.length == 1) {
-				//If win horse is the bet horse, then add the fund
-				if (this.number == bethorse) {
-					funds += amount;
-				}
-				
-				else {
-					funds -= amount;
-				}
-				
-				document.getElementById('funds').innerText = currencySymbol + funds;
-			}
-			
-			else if (results.length == 4) {
-				//All horse arrived, enable again the Start Button
-			}
 		},
 
 		setSpeed: function(speed_) {
@@ -221,7 +226,6 @@ function Horse(id) {
 	}
 }
 
-
 const horse1 = new Horse("horse1");
 const horse2 = new Horse("horse2");
 const horse3 = new Horse("horse3");
@@ -230,8 +234,16 @@ const horse4 = new Horse("horse4");
 const horses = [horse1, horse2, horse3, horse4];
 let results = [], funds = 500, bethorse, amount, random;
 
-function setVisibilityHorses(visibility) {
-	for (const horse of horses) {
-		horse.status.style.visibility = visibility;
+function setInvisibility(visibility) {
+	let status = document.getElementById("measure"); //Variable have to be called status or else it throws error.
+
+	for (const horse of Array.from(horses)) {
+		if (visibility) {
+			horse.status.style.display = "none";
+		}
+
+		else {
+			horse.status.style.display = "inline";
+		}
 	}
 }

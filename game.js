@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	document.getElementById("start").onclick = function() {
 		Button.enabled("start", false);
-		Button.enabled("pos", true);
+		//Button.enabled("pos", true);
 		Button.enabled("measure", true);
 
 		// random = execute(document.getElementById("email").value, document.getElementById("password").value,'version 1.0\nqubits 2\nprep_z q[0]\nprep_z q[1]\nH q[0]\nCNOT q[0],q[1]\nmeasure q[0]\nmeasure q[1]', 10);
@@ -36,11 +36,10 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 		
 		else {
-			setVisibilityHorses(false);
-
 			document.getElementById("pos").onclick = function() {
 				Button.enabled("pos", false);
 				Button.enabled("measure", true);
+				setInvisibility(false);
 
 				//Show the position of the horse
 				for (const horse of horses) {
@@ -51,6 +50,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			document.getElementById("measure").onclick = function() {
 				Button.enabled("pos", true);
 				Button.enabled("measure", false);
+				setInvisibility(true);
 
 				//Show the Speed
 				for (const horse of horses) {
@@ -75,19 +75,19 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	};
 
-	document.getElementById("pos").onclick = () => {
-		setVisibilityHorses(true);
+	/*document.getElementById("pos").onclick = function() {
+		setInvisibility(true);
 
 		for (const horse of horses) {
 			horse.measurePosition();
 		}
 	};
 
-	document.getElementById("measure").onclick = () => {
-		setVisibilityHorses(true);
+	document.getElementById("measure").onclick = function() {
+		setInvisibility(false);
 
 		for (const horse of horses) {
 			horse.measureSpeed();
 		}
-	};
+	};*/
 });
