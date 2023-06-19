@@ -87,19 +87,21 @@ function Horse(id) {
 		//Stop the horse run by change class to standRight
 		this.status.className = 'horse standRight';
 		this.lap = 0;//Reset the lap
+		console.log(numbering);
+		let res = 'result ' + numbering;
 
-		let res = 'result horse' + numbering;
+		numbering = parseInt(numbering.replace("horse", ""));//Get the horse number
 		/*Show the result*/
-		//results.length is the current arrive position
-		document.querySelectorAll('#results .result')[results.length].className.replace("result", res); //The class of result look like: result horse1...
-
+		console.log(document.querySelectorAll('#results .result')[results.length]);//results.length is the current arrive position
+		console.log([results.length]);
+		document.querySelectorAll('#results .result')[results.length].className.replace('result ', res); //The class of result look like: result horse1...
 		//Push the horse number to results array, according the the results array, we know the order of race results
-		results.push(this.number);
+		results.push(numbering);
 
 		//Win horse
 		if (results.length == 1) {
 			//If win horse is the bet horse, then add the fund
-			if (this.number == bethorse) {
+			if (numbering == bethorse) {
 				funds += amount;
 			}
 			
