@@ -404,6 +404,13 @@ aside ul { list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom
 .start:disabled { 
 	background: grey;
 }
+#horsespeed{
+	margin: 4%;
+	color: white;
+}
+#horsespeed label{
+	width: 100%;
+}
 
 #bet, #results {
 	background-color: #ffefb4;
