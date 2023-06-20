@@ -96,7 +96,7 @@ function Horse(id, x, y) {
 			horse.status.style.left = horse.x + 'vw';
 
 			if (horse.lap == num_lap && horse.x > horse.originX + 6) {
-				horse.arrive(id);
+				horse.arrive();
 			}
 			
 			else {
@@ -203,19 +203,18 @@ function Horse(id, x, y) {
 		clearTimeout(this.stop_horse);
 	}
 
-	this.arrive = function(numbering) {
+	this.arrive = function() {
+		//Stop the horse run by change class to standRight
 		this.status.className = 'horse standRight';
-		this.lap = 0;
-		console.log(numbering);
-		let res = 'result ' + numbering;
+		this.lap = 0;//Reset the lap
 
-		numbering = parseInt(numbering.replace("horse", ""));//Get the horse number
 		/*Show the result*/
-		console.log(document.querySelectorAll('#results .result')[results.length]);//results.length is the current arrive position
-		console.log([results.length]);
-		document.querySelectorAll('#results .result')[results.length].className.replace('result ', res); //The class of result look like: result horse1...
+		var tds = document.querySelectorAll('#results .result');//Get all table cell to display the result
+		//results.length is the current arrive position
+		tds[results.length].className = 'result horse'+this.number;//The class of result look like: result horse1...
+
 		//Push the horse number to results array, according the the results array, we know the order of race results
-		results.push(numbering);
+		results.push(this.number);
 
 		if (results.length == 1) {
 			if (this.number == bethorse) {
@@ -233,6 +232,7 @@ function Horse(id, x, y) {
 			Button.enabled('start', true);
 			Button.enabled('pos', false);
 			Button.enabled('measure', false);
+			setInvisibility(false);
 		}
 	}
 
