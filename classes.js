@@ -72,7 +72,7 @@ function Horse(id, x, y) {
 
 	document.getElementById('pos').addEventListener('click', function() {
 		uncertainty.measure();
-		this.speed;
+		this.speed = (uncertainty.from + uncertainty.to) / 2;
 	});
 
 	uncertainty.subscribe(() => {
